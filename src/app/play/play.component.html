@@ -1,0 +1,43 @@
+<div class="takuzu-container" *ngIf="takuzuId!='-1'">
+  <mat-grid-list cols="{{ takuzuSize }}" gutterSize="5px">
+    <mat-grid-tile *ngFor="let index of indexes" (click)="clickSquare(index)"
+      class="{{ takuzuGrid[index] | TakuzuItemStyle }}" [@changeColor]="takuzuGrid[index]">
+    </mat-grid-tile>
+  </mat-grid-list>
+
+
+
+  <div *ngIf="takuzuId!='0'">
+    <mat-grid-list cols="12" rowHeight="58px" class="grid-list-small-margin">
+      <mat-grid-tile colspan="5" class="grid-tile-left">
+        <div class="grid-tile-left">
+          <button mat-raised-button (click)="clickNewGame()" color="primary">Nouvelle partie</button>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="7">
+        <div class="grid-tile-right">
+          <button mat-icon-button>
+            <mat-icon class="mat-icon" (click)="clickUndo()" *ngIf="history.length>0">undo</mat-icon>
+            <mat-icon class="mat-icon-disabled" *ngIf="history.length==0">undo</mat-icon>
+          </button>
+
+          <button mat-icon-button>
+            <mat-icon class="mat-icon-bulb" matBadge="{{ nbClues }}" matBadgeColor="warn" matBadgeSize="small"
+              class="{{ {nbClues, completed, solved} | bulb }}" (click)="clickHelp()">
+              tips_and_updates
+            </mat-icon>
+          </button>
+
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>
+
+<p *ngIf="takuzuId=='-1'">
+  Erreur au chargement de la grille
+</p>
+
+<div class="center" *ngIf="takuzuId=='0'">
+  <mat-spinner></mat-spinner>
+</div>

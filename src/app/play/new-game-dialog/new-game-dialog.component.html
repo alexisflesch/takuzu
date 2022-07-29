@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Nouvelle partie</h1>
+
+<div mat-dialog-content>
+  <p>Voulez-vous vraiment commencer une nouvelle partie ?</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onClickNo()">Non merci</button>
+  <button mat-raised-button color="primary" (click)="onClickYes()" cdkFocusInitial>Oui</button>
+</div>

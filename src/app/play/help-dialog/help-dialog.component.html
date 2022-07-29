@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Besoin d'aide ?</h1>
+
+<div mat-dialog-content class="mat-typography">
+
+  <p>Si vous voulez, je peux vous donner un coup de main !
+    S'il n'y a pas d'erreur dans votre grille, j'ajouterai une nouvelle case. Sinon
+    en fonction de mon humeur, j'ajouterai une nouvelle case ou je corrigerai une erreur.</p>
+
+  <!-- <mat-radio-group aria-labelledby="Type d'aide" [(ngModel)]="helpType">
+    <mat-radio-button ngDefaultControl value="fillGrid">
+      Remplir une case
+    </mat-radio-button>
+    <mat-radio-button value="correctError">
+      Corriger une erreur éventuelle
+    </mat-radio-button>
+  </mat-radio-group> -->
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onClickNo()">Non merci</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="helpType" (click)="onClickYes()"
+    cdkFocusInitial>Ok</button>
+</div>

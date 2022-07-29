@@ -1,1 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+mat-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  align-items: flex-start;
+}
+
+mat-radio-button {
+  margin-bottom: 5px;
+  margin-left: 20px;
+}
+
+button {
+  margin-right: 8px;
+}
+
+.right-aligned {
+  margin-right: 0px;
+  float: right;
+}
+
+.small-right {
+  // width: 80%;
+  float: right;
+  margin-right: 30px;
+}
+
+.foo {
+  width: 90vw;
+  margin-left: 5vw;
+}
+
+.img {
+  width: 300px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.takuzu-container {
+  $foo: min(95vw, 80vh);
+  width: $foo;
+  height: $foo;
+  margin: auto;
+}

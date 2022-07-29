@@ -1,0 +1,17 @@
+<br />
+<div class="foo">
+  <h2>Choisissez la taille de la grille</h2>
+  <p>Attention : la difficulté grandit avec la taille de la grille ! Finir une grille de taille 8 sans indice est loin
+    d'être
+    évident : n'hésitez pas à utiliser la petite ampoule...
+  </p>
+  <mat-radio-group aria-labelledby="Taille de la grille" [(ngModel)]="gridSizeChoice">
+    <mat-radio-button *ngFor="let gridSize of gridSizes" [value]="gridSize">
+      {{gridSize}}
+    </mat-radio-button>
+  </mat-radio-group>
+  <br />
+  <br />
+  <button (click)="playGrid(gridSizeChoice)" mat-raised-button color="primary" class="right-aligned">C'est parti
+    !</button>
+</div>

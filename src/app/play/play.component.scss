@@ -1,0 +1,131 @@
+mat-grid-list {
+  margin: 15px;
+  margin-bottom: 0px;
+}
+
+/** Can be used to center any element */
+.center {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+}
+
+$c0 : lightblue;
+$c1 : lightseagreen;
+$b : navy;
+$c : firebrick;
+
+.empty {
+  background: rgb(237, 232, 232);
+  border: solid lightgray 2px;
+}
+
+.zero {
+  //case initialisée, non modifiable
+  background: $c0;
+  border: solid 2px $b;
+}
+
+.one {
+  //case initialisée, non modifiable
+  background: $c1;
+  border: solid 2px $b;
+}
+
+.two {
+  //case renseignée par l'utilisateur
+  background: $c0;
+  border: solid 2px $c0;
+}
+
+.three {
+  //case renseignée par l'utilisateur
+  background: $c1;
+  border: solid 2px $c1;
+}
+
+.four {
+  //case donnée par le logiciel avec le bouton d'aide
+  background: $c0;
+  border: solid 2px $c;
+}
+
+.five {
+  //case donnée par le logiciel avec le bouton d'aide
+  background: $c1;
+  border: solid 2px $c;
+}
+
+
+.mat-icon {
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  color: #3f51b5;
+}
+
+.mat-icon-bulb {
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  color: gold;
+}
+
+.mat-icon-blink {
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  color: gold;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    color: red;
+  }
+
+  50% {
+    color: gold;
+  }
+
+  100% {
+    color: red;
+  }
+}
+
+
+.mat-icon-disabled {
+  font-size: 45px;
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  color: lightgray;
+}
+
+.mat-icon-button {
+  margin-left: 20px;
+}
+
+.grid-list-small-margin {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.grid-tile-left {
+  width: 100%;
+  text-align: left;
+}
+
+.grid-tile-right {
+  width: 100%;
+  text-align: right;
+  margin-right: 15px;
+}

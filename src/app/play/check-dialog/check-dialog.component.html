@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>
+  <mat-grid-list cols="2" rowHeight="20px">
+    <mat-grid-tile>
+      Bravo !
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-icon *ngFor="let index of data.fullStars" class="mat-icon-star">star</mat-icon>
+      <mat-icon *ngFor="let index of data.halfStars" class="mat-icon-star">star_half</mat-icon>
+      <mat-icon *ngFor="let index of data.emptyStars" class="mat-icon-star">star_border</mat-icon>
+    </mat-grid-tile>
+  </mat-grid-list>
+</h1>
+
+
+<div mat-dialog-content>
+
+  <p>Vous avez terminé la grille ! Voulez-vous commencer une nouvelle partie ?</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onClickNo()">Non</button>
+  <button mat-raised-button color="primary" (click)="onClickYes()" cdkFocusInitial>Oui</button>
+</div>
