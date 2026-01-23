@@ -13,15 +13,15 @@ impl Transformer {
         seen_signatures.insert(Self::signature(source));
 
         let mut attempts = 0;
-        let max_attempts = count * 50;
+        let max_attempts = count * 100;
 
         while variants.len() < count && attempts < max_attempts {
             attempts += 1;
 
             let mut grid = source.clone();
 
-            // Choisir des transformations aléatoires
-            let mut transforms: Vec<u8> = (0..8).collect();
+            // Seulement les transformations SÛRES (préservent les règles)
+            let mut transforms: Vec<u8> = (0..6).collect();
             transforms.shuffle(rng);
 
             let num_transforms = 2 + (rng.next_u32() % 3) as usize;
@@ -33,10 +33,13 @@ impl Transformer {
                     3 => Self::rotate_270(&mut grid),
                     4 => Self::mirror_horizontal(&mut grid),
                     5 => Self::mirror_vertical(&mut grid),
-                    6 => Self::shuffle_rows(&mut grid, rng),
-                    7 => Self::shuffle_cols(&mut grid, rng),
                     _ => {}
                 }
+            }
+
+            // Double vérification que la grille est valide
+            if !Self::is_valid(&grid) {
+                continue;
             }
 
             let sig = Self::signature(&grid);
@@ -51,6 +54,55 @@ impl Transformer {
 
     fn signature(grid: &Grid) -> Vec<u32> {
         (0..grid.size).map(|r| grid.get_row_values(r)).collect()
+    }
+
+    /// Vérifie que la grille respecte toutes les règles du Takuzu
+    fn is_valid(grid: &Grid) -> bool {
+        let n = grid.size;
+        let max = (n / 2) as u32;
+
+        // Vérifier pas de triplets et quotas corrects pour chaque ligne
+        for r in 0..n {
+            let row_val = grid.get_row_values(r);
+            
+            // Check triplets horizontaux
+            for c in 0..n.saturating_sub(2) {
+                let window = (row_val >> c) & 0b111;
+                if window == 0b111 || window == 0b000 {
+                    return false;
+                }
+            }
+
+            // Check quota ligne
+            if grid.count_ones_in_row(r) != max || grid.count_zeros_in_row(r) != max {
+                return false;
+            }
+        }
+
+        // Vérifier pas de triplets verticaux et quotas colonnes
+        for c in 0..n {
+            let col_val = grid.get_col_values(c);
+            
+            // Check triplets verticaux
+            for r in 0..n.saturating_sub(2) {
+                let window = (col_val >> r) & 0b111;
+                if window == 0b111 || window == 0b000 {
+                    return false;
+                }
+            }
+
+            // Check quota colonne
+            if grid.count_ones_in_col(c) != max || grid.count_zeros_in_col(c) != max {
+                return false;
+            }
+        }
+
+        // Vérifier unicité des lignes et colonnes
+        if !grid.rows_unique() || !grid.cols_unique() {
+            return false;
+        }
+
+        true
     }
 
     fn swap_values(grid: &mut Grid) {
@@ -120,38 +172,6 @@ impl Transformer {
             let reversed = Self::reverse_bits(vals, n);
             grid.set_row(r, reversed);
         }
-    }
-
-    fn shuffle_rows(grid: &mut Grid, rng: &mut dyn RngCore) {
-        let n = grid.size;
-        let mut indices: Vec<usize> = (0..n).collect();
-        indices.shuffle(rng);
-
-        let old_values: Vec<u32> = (0..n).map(|r| grid.get_row_values(r)).collect();
-
-        for (new_r, &old_r) in indices.iter().enumerate() {
-            grid.set_row(new_r, old_values[old_r]);
-        }
-    }
-
-    fn shuffle_cols(grid: &mut Grid, rng: &mut dyn RngCore) {
-        let n = grid.size;
-        let mut indices: Vec<usize> = (0..n).collect();
-        indices.shuffle(rng);
-
-        let mut new_grid = Grid::new(n);
-
-        for r in 0..n {
-            let mut new_val = 0u32;
-            for (new_c, &old_c) in indices.iter().enumerate() {
-                if grid.get(r, old_c).unwrap() {
-                    new_val |= 1 << new_c;
-                }
-            }
-            new_grid.set_row(r, new_val);
-        }
-
-        *grid = new_grid;
     }
 
     fn reverse_bits(val: u32, size: usize) -> u32 {
