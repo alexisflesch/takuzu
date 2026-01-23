@@ -111,7 +111,7 @@ pub fn simple_counting(grid: &Grid) -> Deductions {
 pub fn anticipation(grid: &Grid) -> Deductions {
     let mut deductions = Vec::new();
     let n = grid.size;
-    let max = n / 2;
+    // let max = n / 2;
 
     for r in 0..n {
         for c in 0..n {
