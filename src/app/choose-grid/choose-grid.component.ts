@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FetchGridService } from '../fetch-grid.service';
 
-type gridChoice = ('4' | '6' | '8' | '10' | '12' | '14')
-
 @Component({
   selector: 'app-choose-grid',
   templateUrl: './choose-grid.component.html',
@@ -11,33 +9,60 @@ type gridChoice = ('4' | '6' | '8' | '10' | '12' | '14')
 })
 export class ChooseGridComponent implements OnInit {
 
-  stats = {
-    'id': 0,
-    'totals': {
-      '4': 1, '6': 1, '8': 1, '10': 1, '12': 1, '14': 1
-    }
-  }
+  gridSizes: string[] = []
+  gridSizeChoice: string = ''
+  difficulties: number[] = []
+  difficultyChoice: number = 1
 
-  gridSizes: string[] = ['4', '6', '8', '10']//, '12', '14']
-  gridSizeChoice: gridChoice = '4'
+  private summary: any = { sizes: {} }
 
   constructor(
-    private fetchGridService: FetchGridService,
-    private router: Router
+    private router: Router,
+    private fetchGridService: FetchGridService
   ) { }
 
   ngOnInit(): void {
-    this.fetchGridService.fetchStats().subscribe(
-      response => {
-        this.stats = response;
+    this.fetchGridService.fetchSummary().subscribe(summary => {
+      this.summary = summary || { sizes: {} };
+      this.gridSizes = Object.keys(this.summary.sizes || {}).sort((a, b) => parseInt(a) - parseInt(b));
+      if (this.gridSizes.length) {
+        this.gridSizeChoice = this.gridSizes[0].split('x')[0];
+        this.updateDifficulties();
       }
-    )
+    });
   }
 
-  playGrid(size: string) {
-    const num = Math.floor(Math.random() * this.stats['totals'][this.gridSizeChoice]);
-    const id = size + '-' + num
-    this.router.navigate(['/play'], { queryParams: { 'tot': this.stats['totals'][this.gridSizeChoice], id } })
+  updateDifficulties(): void {
+    const sizeKey = `${this.gridSizeChoice}x${this.gridSizeChoice}`;
+    const counts = (this.summary.sizes || {})[sizeKey];
+    if (!counts) {
+      this.difficulties = [];
+      return;
+    }
+    const diffs: number[] = [];
+    for (let d = 1; d <= 5; d++) {
+      if ((counts as any)[`d${d}`] && (counts as any)[`d${d}`] > 0) {
+        diffs.push(d);
+      }
+    }
+    this.difficulties = diffs;
+    if (diffs.length) {
+      this.difficultyChoice = diffs[0];
+    }
+  }
+
+  playGrid() {
+    const sizeKey = `${this.gridSizeChoice}x${this.gridSizeChoice}`;
+    const counts = (this.summary.sizes || {})[sizeKey];
+    if (!counts) {
+      return;
+    }
+    const tot = (counts as any)[`d${this.difficultyChoice}`] || 0;
+    if (!tot) {
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * tot);
+    this.router.navigate(['/play'], { queryParams: { size: this.gridSizeChoice, difficulty: this.difficultyChoice, index: randomIndex } })
   }
 
 }

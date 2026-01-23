@@ -5,13 +5,26 @@
     d'être
     évident : n'hésitez pas à utiliser la petite ampoule...
   </p>
-  <mat-radio-group aria-labelledby="Taille de la grille" [(ngModel)]="gridSizeChoice">
-    <mat-radio-button *ngFor="let gridSize of gridSizes" [value]="gridSize">
+  <mat-radio-group aria-labelledby="Taille de la grille" [(ngModel)]="gridSizeChoice"
+    (ngModelChange)="updateDifficulties()">
+    <mat-radio-button *ngFor="let gridSize of gridSizes" [value]="gridSize.split('x')[0]">
       {{gridSize}}
     </mat-radio-button>
   </mat-radio-group>
   <br />
   <br />
-  <button (click)="playGrid(gridSizeChoice)" mat-raised-button color="primary" class="right-aligned">C'est parti
+  <h3>Choisissez la difficulté</h3>
+  <mat-form-field>
+    <mat-label>Difficulté</mat-label>
+    <mat-select [(ngModel)]="difficultyChoice">
+      <mat-option *ngFor="let diff of difficulties" [value]="diff">
+        {{diff}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br />
+  <br />
+  <button (click)="playGrid()" mat-raised-button color="primary" class="right-aligned"
+    [disabled]="!difficulties || difficulties.length === 0">C'est parti
     !</button>
 </div>

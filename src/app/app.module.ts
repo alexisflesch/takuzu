@@ -24,6 +24,8 @@ import { CheckDialogComponent } from './play/check-dialog/check-dialog.component
 // import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NewGameDialogComponent } from './play/new-game-dialog/new-game-dialog.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatBadgeModule } from '@angular/material/badge';
 import { BulbPipe } from './bulb.pipe';
 import { BadGridDialogComponent } from './play/bad-grid-dialog/bad-grid-dialog.component';
@@ -57,10 +59,10 @@ import { BadGridDialogComponent } from './play/bad-grid-dialog/bad-grid-dialog.c
     MatProgressSpinnerModule,
     MatRadioModule,
     FormsModule,
-    MatIconModule,
     MatDialogModule,
     MatBadgeModule,
-    BrowserAnimationsModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

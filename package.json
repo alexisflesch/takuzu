@@ -6,9 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "sync-grids": "bash -lc 'mkdir -p src/assets/grids && cp -v grid-generator-optimized/grids/*.json src/assets/grids/ 2>/dev/null || true && cp -v grid-generator-optimized/grids_summary.json src/assets/grids/ 2>/dev/null || true'"
   },
   "private": true,
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@angular/animations": "^14.0.0",
     "@angular/cdk": "^14.0.5",

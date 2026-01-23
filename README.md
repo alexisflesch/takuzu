@@ -1,27 +1,84 @@
-# TakuzuAngular
+# Takuzu — Application Angular + Générateur Rust 🇫🇷
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.6.
+## Description ✨
+Takuzu est une application web pour jouer au Takuzu (jeu binaire). L'UI est une application Angular et les grilles jouables sont générées par un générateur écrit en Rust par Claude Opus 4.5 (dans `grid-generator/`). Le format JSON produit est compatible avec l'app et utilise :
+- `grid`: matrice de cases (-1 = case vide, 0 ou 1 = valeur connue)
+- `solution`: matrice complète avec la solution (0/1)
+- `id`: identifiant de la grille
 
-## Development server
+Exemple d'URL partageable : `/play?size=6&difficulty=1&index=23` (charge une grille précise).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Prérequis 🛠️
+- Node.js et npm (utilisez la version compatible avec Angular 14, p.ex. Node 16+)
+- Angular CLI (optionnel pour le dev) : `npm i -g @angular/cli`
+- Rust toolchain (pour le générateur) : `rustup` / `cargo`
+- (Optionnel) nginx pour servir la version production
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+## Installation (développement) 🚀
+1. Installer les dépendances frontend :
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+npm install
+```
 
-## Running unit tests
+2. Lancer le serveur de développement :
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+npm start
+# ouvrir http://localhost:4200/
+```
 
-## Running end-to-end tests
+---
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Générer des grilles (Rust) 🧩
+1. Installer Rust si nécessaire :
 
-## Further help
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+2. Compiler le générateur :
+
+```bash
+cd grid-generator
+cargo build --release
+```
+
+3. Générer des grilles (exemple) :
+
+```bash
+./target/release/takuzu-gen --size 6 --count 50 --difficulty 1 -o ./grids/
+```
+Le générateur écrira des fichiers `takuzu_${size}x${size}_d${difficulty}.json` dans `grid-generator/grids/`.
+
+4. Copier les grilles dans l'app Angular (pour servir depuis `assets`) :
+
+```bash
+cp grid-generator/grids/*.json src/assets/grids/
+```
+
+Note : le format JSON utilise `-1` pour les cases vides afin d'être directement utilisable par l'application.
+
+---
+
+## Build production & déploiement 📦
+1. Construire l'app Angular :
+
+```bash
+npm run build
+# artefacts dans dist/takuzu-angular/
+```
+
+---
+
+## Licence 🔐
+
+- **Application Angular** (`src/` et `dist/`) : **GNU GPL v3 (ou ultérieure)**. Voir `src/LICENSE-GPL-3.0.txt`.
+- **Générateur de grilles** (`grid-generator/`) : **MIT License**. Voir `grid-generator/LICENSE`.
+
+Note : la provenance de certains fichiers générés ou de code assistance (LLM) est indiquée dans le README; si tu veux changer la licence de l'un ou l'autre module, dis‑le moi et je l'appliquerai.

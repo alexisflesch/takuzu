@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <button mat-icon-button>
-      <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
     </button>
     <h1>Takuzu</h1>
   </mat-toolbar-row>
@@ -9,10 +9,10 @@
 </mat-toolbar>
 
 <mat-sidenav-container>
-  <mat-sidenav #sidenav>
+  <mat-sidenav #sidenav="matSidenav">
     <mat-nav-list>
-      <a (click)="sidenav.toggle()" mat-list-item [routerLink]="'/home'"> Accueil </a>
-      <a (click)="sidenav.toggle()" mat-list-item [routerLink]="'/choose-grid'"> Jouer </a>
+      <a mat-list-item (click)="sidenav.toggle()" [routerLink]="'/home'"> Accueil </a>
+      <a mat-list-item (click)="sidenav.toggle()" [routerLink]="'/choose-grid'"> Jouer </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

@@ -88,6 +88,11 @@ export class PlayComponent implements OnInit {
   //Animation
   takuzuGridAnimation: number[] = []
 
+  // Track current grid parameters so we can start a new game with same size/difficulty
+  currentSize: number = 0
+  currentDifficulty: number = 1
+  currentIndex: number = -1
+
 
   constructor(
     private route: ActivatedRoute,
@@ -102,30 +107,73 @@ export class PlayComponent implements OnInit {
   ngOnInit(): void {
     //Get stats for a new game
     this.route.queryParams.subscribe(params => {
-      this.tot = params['tot']
-      var gridId = params['id']
-      if (!gridId) {
-        gridId = '-1'
+      const size = parseInt(params['size']);
+      const difficulty = parseInt(params['difficulty']);
+      const index = parseInt(params['index']);
+
+      // Validate params
+      if (isNaN(size) || isNaN(difficulty) || isNaN(index)) {
+        // Redirect to chooser if params are invalid
+        this.router.navigate(['/choose-grid']);
+        return;
       }
-      this.fetchGridService.fetchGrid(gridId).subscribe(
-        response => {
-          this.takuzuGrid = response['grid'].flat()
-          this.takuzuSolution = response['solution'].flat()
-          this.takuzuId = response['id']
-          this.takuzuSize = Math.sqrt(this.takuzuGrid.length)
-          this.nbClues = this.takuzuSize - 2
-          this.indexes = Array(this.takuzuGrid.length).fill(1).map((x, i) => i)
-          this.solved = false
-          this.completed = false
-          //Animation grid
-          this.takuzuGridAnimation = Array(this.takuzuGrid.length)
-          for (let i = 0; i < this.takuzuGrid.length; i++) {
-            if (this.takuzuGrid[i] != -1) {
-              this.takuzuGridAnimation[i] = 1
+
+      this.currentSize = size
+      this.currentDifficulty = difficulty
+      this.currentIndex = index
+
+      // Get total available puzzles for the chosen size/difficulty
+      this.fetchGridService.fetchSummary().subscribe(summary => {
+        const sizeKey = `${size}x${size}`;
+        const counts = (summary.sizes || {})[sizeKey] || { d1: 0, d2: 0, d3: 0, d4: 0, d5: 0 };
+        this.tot = (counts as any)[`d${difficulty}`] || 0;
+
+        // If no puzzles available, redirect back to chooser
+        if (!this.tot || this.tot <= 0) {
+          this.router.navigate(['/choose-grid']);
+          return;
+        }
+
+        // If requested index is invalid, pick a random one
+        const idx = (isNaN(index) || index < 0 || index >= this.tot) ? Math.floor(Math.random() * this.tot) : index;
+        this.currentIndex = idx;
+
+        this.fetchGridService.fetchGrid(size, difficulty, idx).subscribe(
+          response => {
+            // Guard against missing or malformed responses
+            if (!response || !response['grid'] || !response['solution']) {
+              console.error('Grid not found or malformed:', size, difficulty, idx, response);
+              this.router.navigate(['/choose-grid']);
+              return;
+            }
+
+            const gridArray = Array.isArray(response['grid']) ? response['grid'].flat() : [];
+            const solArray = Array.isArray(response['solution']) ? response['solution'].flat() : [];
+
+            if (gridArray.length === 0 || solArray.length === 0) {
+              console.error('Grid or solution empty:', size, difficulty, idx);
+              this.router.navigate(['/choose-grid']);
+              return;
+            }
+
+            this.takuzuGrid = gridArray
+            this.takuzuSolution = solArray
+            this.takuzuId = response['id']
+            this.takuzuSize = Math.sqrt(this.takuzuGrid.length)
+            this.nbClues = this.takuzuSize - 2
+            this.indexes = Array(this.takuzuGrid.length).fill(1).map((x, i) => i)
+            this.solved = false
+            this.completed = false
+            //Animation grid
+            this.takuzuGridAnimation = Array(this.takuzuGrid.length)
+            for (let i = 0; i < this.takuzuGrid.length; i++) {
+              if (this.takuzuGrid[i] != -1) {
+                this.takuzuGridAnimation[i] = 1
+              }
             }
           }
-        }
-      )
+        )
+      })
     });
 
   }
@@ -202,6 +250,10 @@ export class PlayComponent implements OnInit {
           fullStars: Array(this.fullStars).fill(0),
           halfStars: Array(this.halfStars).fill(0),
           emptyStars: Array(this.emptyStars).fill(0),
+          size: this.currentSize,
+          difficulty: this.currentDifficulty,
+          currentIndex: this.currentIndex,
+          tot: this.tot
         }
       }
     );
@@ -213,10 +265,17 @@ export class PlayComponent implements OnInit {
   }
 
   startNewGame(): void {
-    const num = Math.floor(Math.random() * this.tot);
-    const id = this.takuzuSize + '-' + num
+    // Pick a new random index (0..tot-1) different from currentIndex
+    let num = Math.floor(Math.random() * this.tot);
+    if (this.currentIndex >= 0 && this.tot > 1) {
+      while (num === this.currentIndex) {
+        num = Math.floor(Math.random() * this.tot);
+      }
+    }
+
     this.takuzuGrid = []
-    this.router.navigate(['/play'], { queryParams: { 'tot': this.tot, id } })
+    // Navigate keeping same size and difficulty and the new index
+    this.router.navigate(['/play'], { queryParams: { size: this.currentSize, difficulty: this.currentDifficulty, index: num } })
   }
 
   clickNewGame(): void {

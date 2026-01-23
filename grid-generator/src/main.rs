@@ -45,7 +45,8 @@ fn main() {
         "Generating {} puzzles of size {}x{} at difficulty {}...",
         cli.count, cli.size, cli.size, cli.difficulty
     );
-
+    // Ensure output directory exists
+    std::fs::create_dir_all(&cli.output).expect("Failed to create output directory");
     let puzzles = generator::generate_puzzles(cli.size, cli.count, cli.difficulty);
 
     let filename = format!(
@@ -54,7 +55,14 @@ fn main() {
     );
     let path = cli.output.join(&filename);
 
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("Failed to create output directory");
+    }
+
     export::save_puzzles(&puzzles, &path).expect("Failed to write output file");
+
+    // Update summary file in the output directory
+    export::update_summary(&cli.output).expect("Failed to update summary");
 
     println!("Saved {} puzzles to {}", puzzles.len(), path.display());
 }
