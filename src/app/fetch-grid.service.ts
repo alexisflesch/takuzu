@@ -35,7 +35,6 @@ interface DifficultyCounts {
   d2: number;
   d3: number;
   d4: number;
-  d5: number;
 }
 
 interface Summary {
@@ -67,7 +66,7 @@ export class FetchGridService {
       map(summary => {
         const totals: { [k: string]: number } = {};
         for (const [size, counts] of Object.entries(summary.sizes || {})) {
-          const sum = (counts.d1 || 0) + (counts.d2 || 0) + (counts.d3 || 0) + (counts.d4 || 0) + (counts.d5 || 0);
+          const sum = (counts.d1 || 0) + (counts.d2 || 0) + (counts.d3 || 0) + (counts.d4 || 0);
           totals[size.replace('x', '')] = sum;
         }
         return { id: 1, totals } as stats;

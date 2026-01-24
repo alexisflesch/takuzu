@@ -1,6 +1,7 @@
 use crate::digger::Digger;
 use crate::grid::{Grid, Puzzle};
 use crate::transform::Transformer;
+use crate::solver::{Difficulty, HumanSolver};
 use rand::seq::SliceRandom;
 use rand::Rng;
 use rayon::prelude::*;
@@ -11,16 +12,18 @@ struct ValidLine {
     bits: u32,
 }
 
-pub fn generate_puzzles(size: usize, count: usize, difficulty: u8) -> Vec<Puzzle> {
+pub fn generate_puzzles(size: usize, count: usize, difficulty: u8, try_harder: bool) -> Vec<Puzzle> {
     let valid_lines = precompute_valid_lines(size);
     let start = Instant::now();
 
+    // Strategy: Generate source grids and variants
     let sources_needed = (count / 5).max(3).min(count);
-    let variants_per_source = (count / sources_needed) + 2;
+    let sources_needed = if try_harder { sources_needed * 2 } else { sources_needed };
+    let variants_per_source = (count / (sources_needed.max(1))) + 4;
 
     println!(
-        "Strategy: {} source grids × ~{} variants",
-        sources_needed, variants_per_source
+        "Strategy: {} source grids × ~{} variants (try_harder: {})",
+        sources_needed, variants_per_source, try_harder
     );
 
     let source_grids: Vec<Grid> = generate_source_grids(size, sources_needed, &valid_lines);
@@ -32,38 +35,69 @@ pub fn generate_puzzles(size: usize, count: usize, difficulty: u8) -> Vec<Puzzle
     );
 
     let mut puzzles: Vec<Puzzle> = Vec::with_capacity(count);
+    let mut target_difficulty_count = 0;
+    let target_diff = Difficulty::from(difficulty);
+    let solver = HumanSolver::new(target_diff);
 
-for source in source_grids.iter() {
-        if puzzles.len() >= count {
+    for source in source_grids.iter() {
+        if target_difficulty_count >= count {
             break;
         }
 
         let mut rng = rand::thread_rng();
-        let needed = (count - puzzles.len()).min(variants_per_source);
+        let needed = variants_per_source;
 
         let mut variants = Transformer::generate_variants(source, needed, &mut rng);
         variants.insert(0, source.clone());
     
         let dug: Vec<Puzzle> = variants
-    .par_iter()
-    .filter_map(|complete_grid| {
-        let digger = Digger::new(difficulty.into(), size);
-        let puzzle_grid = digger.dig(complete_grid)?;
-        Some(puzzle_grid.to_puzzle(complete_grid))
-    })
-    .collect();
+            .par_iter()
+            .filter_map(|complete_grid| {
+                let mut digger = Digger::new(target_diff, size);
+                if try_harder {
+                    digger.set_try_harder(true);
+                }
+
+                let puzzle_grid = digger.dig(complete_grid)?;
+                Some(puzzle_grid.to_puzzle(complete_grid))
+            })
+            .collect();
 
         for puzzle in dug {
-            if puzzles.len() < count {
-                puzzles.push(puzzle);
+            let grid = Grid::from_puzzle(&puzzle);
+            let actual = solver.evaluate_difficulty(&grid).unwrap_or(Difficulty::Level1);
+            
+            if actual >= target_diff {
+                target_difficulty_count += 1;
+            }
+            
+            puzzles.push(puzzle);
+
+            if actual >= target_diff || (puzzles.len() % 10 == 0) {
                 println!(
-                    "Generated {}/{} puzzles ({:?})",
-                    puzzles.len(),
+                    "Progress: {}/{} target puzzles found (Total kept: {}, Last actual: Level {}) ({:?})",
+                    target_difficulty_count,
                     count,
+                    puzzles.len(),
+                    actual as u8,
                     start.elapsed()
                 );
             }
+
+            if target_difficulty_count >= count && try_harder {
+                break;
+            }
         }
+    }
+
+    if try_harder && target_difficulty_count < count {
+        println!(
+            "Warning: Could only find {}/{} puzzles at target difficulty Level {}. Kept {} easier puzzles.",
+            target_difficulty_count,
+            count,
+            target_diff as u8,
+            puzzles.len()
+        );
     }
 
     puzzles

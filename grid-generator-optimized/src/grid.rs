@@ -248,6 +248,18 @@ impl Grid {
         true
     }
 
+    pub fn from_puzzle(puzzle: &Puzzle) -> Self {
+        let mut grid = Grid::new(puzzle.size);
+        for (r, row) in puzzle.puzzle.iter().enumerate() {
+            for (c, val) in row.iter().enumerate() {
+                if let Some(v) = val {
+                    grid.set(r, c, Some(*v != 0));
+                }
+            }
+        }
+        grid
+    }
+
     pub fn to_puzzle(&self, solution: &Grid) -> Puzzle {
         Puzzle {
             size: self.size,

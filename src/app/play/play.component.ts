@@ -122,11 +122,17 @@ export class PlayComponent implements OnInit {
       this.currentDifficulty = difficulty
       this.currentIndex = index
 
+      // Determine effective difficulty (map size 4 + difficulty 4 -> difficulty 3)
+      let effectiveDifficulty = difficulty;
+      if (size === 4 && difficulty === 4) {
+        effectiveDifficulty = 3;
+      }
+
       // Get total available puzzles for the chosen size/difficulty
       this.fetchGridService.fetchSummary().subscribe(summary => {
         const sizeKey = `${size}x${size}`;
         const counts = (summary.sizes || {})[sizeKey] || { d1: 0, d2: 0, d3: 0, d4: 0, d5: 0 };
-        this.tot = (counts as any)[`d${difficulty}`] || 0;
+        this.tot = (counts as any)[`d${effectiveDifficulty}`] || 0;
 
         // If no puzzles available, redirect back to chooser
         if (!this.tot || this.tot <= 0) {
@@ -138,7 +144,7 @@ export class PlayComponent implements OnInit {
         const idx = (isNaN(index) || index < 0 || index >= this.tot) ? Math.floor(Math.random() * this.tot) : index;
         this.currentIndex = idx;
 
-        this.fetchGridService.fetchGrid(size, difficulty, idx).subscribe(
+        this.fetchGridService.fetchGrid(size, effectiveDifficulty, idx).subscribe(
           response => {
             // Guard against missing or malformed responses
             if (!response || !response['grid'] || !response['solution']) {
