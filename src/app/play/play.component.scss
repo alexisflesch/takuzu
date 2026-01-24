@@ -59,18 +59,47 @@ $c : firebrick;
 
 
 /* Icons: unified sizing and minimal repetition */
-.mat-icon, .mat-icon-bulb, .mat-icon-blink, .mat-icon-disabled {
+.mat-icon,
+.mat-icon-bulb,
+.mat-icon-blink,
+.mat-icon-disabled {
   font-size: 36px;
   height: 36px;
   width: 36px;
   line-height: 36px;
   display: block;
 }
-.mat-icon { color: #3f51b5; }
-.mat-icon-bulb, .mat-icon-blink { color: gold; }
-.mat-icon-blink { animation: blink 1s infinite; }
-@keyframes blink { 0%{color:red;} 50%{color:gold;} 100%{color:red;} }
-.mat-icon-disabled { color: lightgray; }
+
+.mat-icon {
+  color: #3f51b5;
+}
+
+.mat-icon-bulb,
+.mat-icon-blink {
+  color: gold;
+}
+
+.mat-icon-blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    color: red;
+  }
+
+  50% {
+    color: gold;
+  }
+
+  100% {
+    color: red;
+  }
+}
+
+.mat-icon-disabled {
+  color: lightgray;
+}
 
 .mat-icon-button {
   margin-left: 20px;

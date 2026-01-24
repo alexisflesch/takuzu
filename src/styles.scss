@@ -22,6 +22,16 @@ mat-radio-button {
   margin-left: 20px;
 }
 
+/* Reduce gap between radio buttons in the chooser (scoped to .foo) */
+.foo mat-radio-group {
+  gap: 2px;
+}
+
+.foo mat-radio-button {
+  margin-bottom: 4px !important;
+  margin-left: 12px !important;
+}
+
 button {
   margin-right: 8px;
 }
