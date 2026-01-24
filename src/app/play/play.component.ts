@@ -307,23 +307,30 @@ export class PlayComponent implements OnInit {
   clickUndo(): void {
     // Go back in history when undo button is clicked
     let i = this.history.pop()
-    if (i) {
+
+    // Pop history until we find an index we can actually revert, and
+    // handle index 0 correctly by checking against undefined rather than falsiness.
+    while (typeof i !== 'undefined') {
       if (this.takuzuGrid[i] == 2) {
         this.takuzuGrid[i] = -1
         this.completed = false
         this.solved = false
+        return
       }
       else if (this.takuzuGrid[i] == 3) {
         this.takuzuGrid[i] = 2
         this.checkIfCompleted()
+        return
       }
       else if (this.takuzuGrid[i] == -1) {
         this.takuzuGrid[i] = 3
         this.checkIfCompleted()
+        return
       }
       else {
-        //When help button has been used and an item has been overwritten
-        this.clickUndo()
+        // When help button has been used and an item has been overwritten,
+        // skip this history entry and continue with the next one.
+        i = this.history.pop()
       }
     }
   }

@@ -3,11 +3,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "typeRoots": [
+      "node_modules/@types",
       "node_modules/@angular/material"
     ],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
