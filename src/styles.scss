@@ -57,3 +57,35 @@ button {
   height: $foo;
   margin: auto;
 }
+
+/* Hide Material MDC icon button touch/ripple/focus elements globally for smaller custom icon buttons */
+button.mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+button.mat-mdc-icon-button .mat-mdc-focus-indicator,
+button.mat-mdc-icon-button .mat-mdc-button-touch-target,
+button.mat-mdc-icon-button .mat-ripple,
+button.mat-mdc-icon-button .mat-mdc-ripple,
+button .mat-mdc-button-persistent-ripple,
+button .mat-mdc-focus-indicator,
+button .mat-mdc-button-touch-target,
+button .mat-ripple,
+button .mat-mdc-ripple,
+.mdc-icon-button__ripple,
+.mat-mdc-button-persistent-ripple,
+.mat-mdc-focus-indicator,
+.mat-mdc-button-touch-target,
+.mat-ripple,
+.mat-mdc-ripple {
+  display: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Also remove any persistent ripple background via pseudo elements */
+button.mat-mdc-icon-button::before,
+button.mat-mdc-icon-button::after {
+  content: none !important;
+  display: none !important;
+}

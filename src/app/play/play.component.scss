@@ -9,8 +9,6 @@ mat-grid-list {
   position: absolute;
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -webkit-transform: translateX(-50%) translateY(-50%);
 }
 
 $c0 : lightblue;
@@ -60,53 +58,19 @@ $c : firebrick;
 }
 
 
-.mat-icon {
-  font-size: 45px;
-  height: 45px;
-  width: 45px;
-  line-height: 45px;
-  color: #3f51b5;
+/* Icons: unified sizing and minimal repetition */
+.mat-icon, .mat-icon-bulb, .mat-icon-blink, .mat-icon-disabled {
+  font-size: 36px;
+  height: 36px;
+  width: 36px;
+  line-height: 36px;
+  display: block;
 }
-
-.mat-icon-bulb {
-  font-size: 45px;
-  height: 45px;
-  width: 45px;
-  line-height: 45px;
-  color: gold;
-}
-
-.mat-icon-blink {
-  font-size: 45px;
-  height: 45px;
-  width: 45px;
-  line-height: 45px;
-  color: gold;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0% {
-    color: red;
-  }
-
-  50% {
-    color: gold;
-  }
-
-  100% {
-    color: red;
-  }
-}
-
-
-.mat-icon-disabled {
-  font-size: 45px;
-  height: 45px;
-  width: 45px;
-  line-height: 45px;
-  color: lightgray;
-}
+.mat-icon { color: #3f51b5; }
+.mat-icon-bulb, .mat-icon-blink { color: gold; }
+.mat-icon-blink { animation: blink 1s infinite; }
+@keyframes blink { 0%{color:red;} 50%{color:gold;} 100%{color:red;} }
+.mat-icon-disabled { color: lightgray; }
 
 .mat-icon-button {
   margin-left: 20px;
@@ -119,13 +83,167 @@ $c : firebrick;
   margin-right: 15px;
 }
 
+/* Responsive: on narrow screens stack the action tiles so left button doesn't shrink and wrap */
+@media (max-width: 600px) {
+  .grid-list-small-margin {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .grid-list-small-margin .grid-tile-left,
+  .grid-list-small-margin .grid-tile-right {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  /* Left-align the left tile/button and right-align the right tile */
+  .grid-list-small-margin .grid-tile-left {
+    text-align: left !important;
+  }
+
+  .grid-list-small-margin .grid-tile-right {
+    text-align: right !important;
+  }
+
+  .grid-tile-left {
+    text-align: left !important;
+  }
+
+  .grid-tile-left button.mat-raised-button {
+    margin: 0 !important;
+    align-self: flex-start !important;
+    min-width: 140px !important;
+    margin-left: 15px !important;
+  }
+
+  .grid-tile-right {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-right: 0 !important;
+    padding-right: 12px !important;
+    /* push icons slightly inward from the edge */
+  }
+
+  /* Remove extra left margin on icon buttons for small screens and add right spacing */
+  .grid-tile-right .mat-icon-button {
+    margin-left: 8px !important;
+    margin-right: 4px !important;
+  }
+}
+
 .grid-tile-left {
   width: 100%;
   text-align: left;
+}
+
+/* Ensure the "Nouvelle partie" button doesn't wrap on small screens. Increase specificity and target the inner wrapper. */
+.grid-tile-left button.mat-raised-button,
+.grid-tile-left div.grid-tile-left>button.mat-raised-button {
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  min-width: 140px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+.grid-tile-left button.mat-raised-button .mat-button-wrapper {
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+/* On very small screens reduce font-size and padding slightly so it fits */
+@media (max-width: 420px) {
+  .grid-tile-left button.mat-raised-button {
+    min-width: 120px !important;
+    font-size: 13px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
 }
 
 .grid-tile-right {
   width: 100%;
   text-align: right;
   margin-right: 15px;
+}
+
+
+/* Ensure icon buttons match the icon size so hover/ripple centers align */
+.grid-tile-right button.mat-icon-button,
+.grid-tile-right button.mat-icon-button.mat-focus-indicator {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  vertical-align: middle !important;
+  line-height: 36px !important;
+  overflow: visible !important;
+  /* keep badge visible */
+}
+
+.grid-tile-right mat-icon {
+  display: block !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  text-align: center !important;
+}
+
+/* Remove hover/focus/active background */
+.grid-tile-right button.mat-icon-button:hover,
+.grid-tile-right button.mat-icon-button:active,
+.grid-tile-right button.mat-icon-button:focus {
+  background-color: transparent !important;
+}
+
+/* Hide any ripple elements or pseudo-elements */
+.grid-tile-right button.mat-icon-button .mat-ripple-element,
+.grid-tile-right button.mat-icon-button .cdk-ripple-element,
+.grid-tile-right mat-icon .mat-ripple-element,
+.grid-tile-right mat-icon .cdk-ripple-element,
+.grid-tile-right .mat-badge .mat-ripple-element {
+  display: none !important;
+}
+
+.grid-tile-right button.mat-icon-button::after,
+.grid-tile-right button.mat-icon-button::before {
+  background: transparent !important;
+  box-shadow: none !important;
+  content: none !important;
+  display: none !important;
+}
+
+/* Also prevent Material focus styles from showing */
+.grid-tile-right button.mat-focus-indicator:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide MDC touch targets, focus indicators and ripples that produce the grey circle */
+:host ::ng-deep .grid-tile-right .mat-mdc-button-touch-target,
+:host ::ng-deep .grid-tile-right .mat-mdc-focus-indicator,
+:host ::ng-deep .grid-tile-right .mat-ripple,
+:host ::ng-deep .grid-tile-right .mat-mdc-ripple,
+:host ::ng-deep .grid-tile-right .mat-ripple-element,
+:host ::ng-deep .grid-tile-right .mat-mdc-focus-indicator::after {
+  display: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
 }

@@ -16,14 +16,16 @@
       </mat-grid-tile>
       <mat-grid-tile colspan="7">
         <div class="grid-tile-right">
-          <button mat-icon-button>
-            <mat-icon class="mat-icon" (click)="clickUndo()" *ngIf="history.length>0">undo</mat-icon>
-            <mat-icon class="mat-icon-disabled" *ngIf="history.length==0">undo</mat-icon>
+          <button mat-icon-button disableRipple (click)="clickUndo()" *ngIf="history.length>0">
+            <mat-icon class="mat-icon">undo</mat-icon>
+          </button>
+          <button mat-icon-button disableRipple *ngIf="history.length==0">
+            <mat-icon class="mat-icon-disabled">undo</mat-icon>
           </button>
 
-          <button mat-icon-button>
-            <mat-icon class="mat-icon-bulb" matBadge="{{ nbClues }}" matBadgeColor="warn" matBadgeSize="small"
-              class="{{ {nbClues, completed, solved} | bulb }}" (click)="clickHelp()">
+          <button mat-icon-button disableRipple (click)="clickHelp()" aria-label="Help" [disabled]="nbClues==0">
+            <mat-icon matBadge="{{ nbClues }}" matBadgeColor="warn" matBadgeSize="small"
+              [ngClass]="({nbClues, completed, solved} | bulb)" [class.mat-icon-blink]="isFlashing">
               tips_and_updates
             </mat-icon>
           </button>

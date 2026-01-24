@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FetchGridService } from '../fetch-grid.service';
 import { CheckDialogComponent } from './check-dialog/check-dialog.component';
-import { HelpDialogComponent } from './help-dialog/help-dialog.component';
+
 import { NewGameDialogComponent } from './new-game-dialog/new-game-dialog.component';
 
 
@@ -80,6 +80,7 @@ export class PlayComponent implements OnInit {
   solved: boolean = false
   tot: number = 1 //Total number of grids of this size (to create a new game)
   nbClues: number = 0; //Number of available clues
+  isFlashing: boolean = false; // When true, clicking a square will reveal it (help mode)
   //Score stuff
   fullStars: number = 0
   halfStars: number = 0
@@ -294,47 +295,13 @@ export class PlayComponent implements OnInit {
   }
 
   clickHelp(): void {
-    if (this.nbClues == 0 && this.completed && !this.solved) {
-      const dialogBadGrid = this.dialogBadGrid.open(BadGridDialogComponent)
+    // If no clues left, button is disabled in template; do nothing as safeguard
+    if (this.nbClues == 0) {
       return
     }
-    else if (this.nbClues == 0) {
-      return
-    }
-    else {
-      const dialogHelpRef = this.dialogHelp.open(HelpDialogComponent);
-      dialogHelpRef.afterClosed().subscribe(result => {
-        if (result == 'no') {
-          return
-        }
-        const errors = this.getErrors()
-        const indexes = this.getEmptySpots()
 
-        var foo = 0
-        //S'il y a des erreurs on en corrige une avec proba 0.5
-        if (errors.length && indexes.length) {
-          foo = Math.random()
-        }
-        //Si la grille est pleine on cherche les erreurs
-        else if (!indexes.length) {
-          foo = 1
-        }
-        if (foo < .5) {
-          var randomIndex = Math.floor(Math.random() * indexes.length)
-          this.takuzuGrid[indexes[randomIndex]] = this.takuzuSolution[indexes[randomIndex]] + 4
-          this.nbClues -= 1;
-          this.checkIfCompleted()
-        }
-        else {
-          this.nbClues -= 1
-          if (errors) {
-            var randomIndex = Math.floor(Math.random() * errors.length)
-            this.takuzuGrid[errors[randomIndex]] = this.takuzuSolution[errors[randomIndex]] + 4
-            this.checkIfCompleted()
-          }
-        }
-      });
-    }
+    // Toggle flashing mode: when flashing, clicking an empty square will reveal it
+    this.isFlashing = !this.isFlashing
   }
 
   clickUndo(): void {
@@ -363,6 +330,23 @@ export class PlayComponent implements OnInit {
 
 
   clickSquare(index: number): void {
+    // If in flashing/help mode: reveal an empty square and consume one clue
+    if (this.isFlashing) {
+      // Only reveal empty, modifiable squares
+      if (this.takuzuGrid[index] === -1) {
+        // Reveal the real value and make it read-only (same behavior as initial given squares)
+        this.takuzuGrid[index] = this.takuzuSolution[index]
+        this.nbClues -= 1
+        this.isFlashing = false
+        this.checkIfCompleted()
+        return
+      } else {
+        // Clicking anywhere else cancels flashing
+        this.isFlashing = false
+        return
+      }
+    }
+
     // Si case non modifiable
     if (this.takuzuGrid[index] == 0 || this.takuzuGrid[index] == 1 ||
       this.takuzuGrid[index] == 4 || this.takuzuGrid[index] == 5
