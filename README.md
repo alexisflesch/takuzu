@@ -1,5 +1,9 @@
 # Takuzu — Application Angular + Générateur Rust 🇫🇷
 
+## Jouer en ligne
+
+s[Takuzu](https://takuzu.alexisfles.ch)
+
 ## Description ✨
 Takuzu est une application web pour jouer au Takuzu (jeu binaire). L'UI est une application Angular et les grilles jouables sont générées par un générateur écrit en Rust par Claude Opus 4.5 (dans `grid-generator/`). Le format JSON produit est compatible avec l'app et utilise :
 - `grid`: matrice de cases (-1 = case vide, 0 ou 1 = valeur connue)
@@ -80,5 +84,3 @@ npm run build
 
 - **Application Angular** (`src/` et `dist/`) : **GNU GPL v3 (ou ultérieure)**. Voir `src/LICENSE-GPL-3.0.txt`.
 - **Générateur de grilles** (`grid-generator/`) : **MIT License**. Voir `grid-generator/LICENSE`.
-
-Note : la provenance de certains fichiers générés ou de code assistance (LLM) est indiquée dans le README; si tu veux changer la licence de l'un ou l'autre module, dis‑le moi et je l'appliquerai.
