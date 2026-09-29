@@ -2,7 +2,7 @@
 
 ## Jouer en ligne
 
-s[Takuzu](https://takuzu.alexisfles.ch)
+[Takuzu](https://takuzu.alexisfles.ch)
 
 ## Description ✨
 Takuzu est une application web pour jouer au Takuzu (jeu binaire). L'UI est une application Angular et les grilles jouables sont générées par un générateur écrit en Rust par Claude Opus 4.5 (dans `grid-generator/`). Le format JSON produit est compatible avec l'app et utilise :
